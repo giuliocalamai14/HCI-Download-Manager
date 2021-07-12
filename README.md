@@ -26,7 +26,7 @@ pip3 install requests
 
 ### GUI Preview
 
-![](https://github.com/giuliocalamai14/3D-sound-synthesis/blob/master/GUI%20image/gui.png)
+![](https://github.com/giuliocalamai14/HCI-Download-Manager/blob/main/GUI%20Image/download_manager.png)
 
 
 
