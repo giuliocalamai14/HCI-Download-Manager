@@ -129,10 +129,12 @@ def add_download_item(url, event_thread):
         percent = StringVar()
         percent.set("0 %")
         label_percentage = Label(frame_item, textvariable=percent, padx=5, anchor="w", bg=bg_item, fg="white")
+        label_percentage.config(font=("Arial", "13"))
         label_percentage.grid(row=0, column=2)
         size = StringVar()
         size.set("0 KB")
         label_size = Label(frame_item, textvariable=size, padx=5, anchor="w", bg=bg_item, fg="white")
+        label_size.config(font = ("Arial", "11"))
         label_size.grid(row=1, column=2)
 
         # Buttons for pause/resume and delete downloads
@@ -233,7 +235,12 @@ input_frame = Frame(frame, bg=bg_bar, padx=5, pady=5)
 # Define and place the 2 buttons inside the input_frame element
 label_url = Label(input_frame, text="Insert URL", bg=bg_bar, fg="white", padx=5, pady=5, anchor="w")
 label_url.grid(row=0, column=0, sticky="nsew")
-entry_url = Entry(input_frame, bg="white", fg="black", width=50)
+
+if platform == 'darwin':
+    entry_url = Entry(input_frame, bg="white", fg="black", width=50)
+else:
+    entry_url = Entry(input_frame, bg="white", fg="black", width=80)
+
 entry_url.grid(row=0, column=1)
 button_download = Button(input_frame, text="Download", bg=bg_button, fg="black", activebackground=bg_button_onclick,
                          activeforeground="black", borderless=True, focusthickness=0, command=pass_url_data, padx=10,
@@ -242,7 +249,12 @@ button_download.grid(row=0, column=2, sticky="nsew", padx=10, pady=10)
 input_frame.grid_columnconfigure(0, weight=1)
 label_directory = Label(input_frame, text="SAVE directory", bg=bg_bar, fg="white", padx=5, pady=5, anchor="w")
 label_directory.grid(row=1, column=0, sticky="nsew")
-entry_directory = Entry(input_frame, bg="white", fg="black", width=50)
+
+if platform == 'darwin':
+    entry_directory = Entry(input_frame, bg="white", fg="black", width=50)
+else:
+    entry_directory = Entry(input_frame, bg="white", fg="black", width=80)
+
 entry_directory.insert(END, folder_path)
 entry_directory.grid(row=1, column=1)
 button_browse = Button(input_frame, text="Browse", bg=bg_button, fg="black", activebackground=bg_button_onclick,
