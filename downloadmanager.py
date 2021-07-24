@@ -96,122 +96,125 @@ def add_download_item(url, event_thread):
     # Check if path selected exist
     if os.path.exists(folder_path):
         path = folder_path + "/" + f_name
-        # Create a frame_item representing the element in download
-        frame_item = Frame(download_frame, bg=bg_item, padx=5, pady=5, highlightbackground=bg_item_border,
-                           highlightcolor=bg_item_border, highlightthickness=1)
+        if os.path.exists(path) is False:
+            # Create a frame_item representing the element in download
+            frame_item = Frame(download_frame, bg=bg_item, padx=5, pady=5, highlightbackground=bg_item_border,
+                               highlightcolor=bg_item_border, highlightthickness=1)
 
-        img = Image.open("./icons/download_icon_win.png")
-        if platform == 'darwin':
-            img = Image.open("./icons/download_icon_mac.png").convert("RGB")
-        render = ImageTk.PhotoImage(img.resize((54, 54), Image.ANTIALIAS))
-        label = Label(frame_item, bg=bg_item, image=render)
-        label.image = render
-        label.grid(row=0, column=0, rowspan=2)
+            img = Image.open("./icons/download_icon_win.png")
+            if platform == 'darwin':
+                img = Image.open("./icons/download_icon_mac.png").convert("RGB")
+            render = ImageTk.PhotoImage(img.resize((54, 54), Image.ANTIALIAS))
+            label = Label(frame_item, bg=bg_item, image=render)
+            label.image = render
+            label.grid(row=0, column=0, rowspan=2)
 
-        # Title of the element in download
-        title = Label(frame_item, bg=bg_item, fg="white", text=f_name, padx=5, pady=5, anchor="w")
-        title.config(font=("Arial", "15"))
-        title.grid(row=0, column=1, sticky="nsew")
+            # Title of the element in download
+            title = Label(frame_item, bg=bg_item, fg="white", text=f_name, padx=5, pady=5, anchor="w")
+            title.config(font=("Arial", "15"))
+            title.grid(row=0, column=1, sticky="nsew")
 
-        # Setting a theme for the progress bar (on OSX)
-        s = ttk.Style()
-        s.theme_use('default')
-        s.configure("bar.Horizontal.TProgressbar", troughcolor='#BFBDC1', bordercolor='#BFBDC1',
-                    background='#5fa769', lightcolor='#5fa769', darkcolor='#5fa769', borderless=True)
+            # Setting a theme for the progress bar (on OSX)
+            s = ttk.Style()
+            s.theme_use('default')
+            s.configure("bar.Horizontal.TProgressbar", troughcolor='#BFBDC1', bordercolor='#BFBDC1',
+                        background='#5fa769', lightcolor='#5fa769', darkcolor='#5fa769', borderless=True)
 
-        # Define a progress bar
-        progress = Progressbar(frame_item, orient=HORIZONTAL, mode="determinate",
-                               style="bar.Horizontal.TProgressbar")
-        progress['value'] = 0
-        progress.grid(row=1, column=1, sticky="nsew")
+            # Define a progress bar
+            progress = Progressbar(frame_item, orient=HORIZONTAL, mode="determinate",
+                                   style="bar.Horizontal.TProgressbar")
+            progress['value'] = 0
+            progress.grid(row=1, column=1, sticky="nsew")
 
-        # Labels for percentage and size
-        percent = StringVar()
-        percent.set("0 %")
-        label_percentage = Label(frame_item, textvariable=percent, padx=5, anchor="w", bg=bg_item, fg="white")
-        label_percentage.config(font=("Arial", "13"))
-        label_percentage.grid(row=0, column=2)
-        size = StringVar()
-        size.set("0 KB")
-        label_size = Label(frame_item, textvariable=size, padx=5, anchor="w", bg=bg_item, fg="white")
-        label_size.config(font=("Arial", "11"))
-        label_size.grid(row=1, column=2)
+            # Labels for percentage and size
+            percent = StringVar()
+            percent.set("0 %")
+            label_percentage = Label(frame_item, textvariable=percent, padx=5, anchor="w", bg=bg_item, fg="white")
+            label_percentage.config(font=("Arial", "13"))
+            label_percentage.grid(row=0, column=2)
+            size = StringVar()
+            size.set("0 KB")
+            label_size = Label(frame_item, textvariable=size, padx=5, anchor="w", bg=bg_item, fg="white")
+            label_size.config(font=("Arial", "11"))
+            label_size.grid(row=1, column=2)
 
-        # Buttons for pause/resume and delete downloads
-        btn_text = StringVar()
-        btn_text.set("Pause")
-        button_pause_resume = Button(frame_item, textvariable=btn_text, bg=bg_button_resume, fg="white",
-                                     activebackground=bg_button_resume_onclick, borderless=True, focusthickness=0,
-                                     command=lambda: paused(event_thread), padx=5, pady=5)
-        button_pause_resume.grid(row=0, column=3)
-        button_delete = Button(frame_item, text="Delete", bg=bg_delete, fg="white",
-                               activebackground=bg_delete_onclick, borderless=True, focusthickness=0,
-                               command=lambda: delete(frame_item), padx=5, pady=5)
-        button_delete.grid(row=1, column=3)
+            # Buttons for pause/resume and delete downloads
+            btn_text = StringVar()
+            btn_text.set("Pause")
+            button_pause_resume = Button(frame_item, textvariable=btn_text, bg=bg_button_resume, fg="white",
+                                         activebackground=bg_button_resume_onclick, borderless=True, focusthickness=0,
+                                         command=lambda: paused(event_thread), padx=5, pady=5)
+            button_pause_resume.grid(row=0, column=3)
+            button_delete = Button(frame_item, text="Delete", bg=bg_delete, fg="white",
+                                   activebackground=bg_delete_onclick, borderless=True, focusthickness=0,
+                                   command=lambda: delete(frame_item), padx=5, pady=5)
+            button_delete.grid(row=1, column=3)
 
-        frame_item.pack(fill="x", expand=True)
-        frame_item.columnconfigure(1, weight=1)
+            frame_item.pack(fill="x", expand=True)
+            frame_item.columnconfigure(1, weight=1)
 
-        loop = True
-        bytes_read = 0
-        # Main loop of thread
-        while loop:
-            try:
-                # Define the mode of writing: "wb" -> writing binary ; "ab" -> append binary
-                # "wb" is used the first time the file is created
-                # "ab" is used on every resume to continue the download
-                if bytes_read == 0:
-                    write_mode = "wb"
-                else:
-                    write_mode = "ab"
-                    resume_header = {'Range': 'bytes=%d-' % bytes_read}
-                    req = requests.get(url, headers=resume_header, stream=True, allow_redirects=True)
-                # Create the file in the selected path
-                with open(path, write_mode) as file_obj:
-                    # Start the download and write the file with a
-                    for chunk in req.iter_content(chunk_size=1024):
-                        if chunk:
-                            if event_thread.isSet() is False:
-                                pause_resume = "Resume"
-                                btn_text.set(pause_resume)
-                                # Suspend the thread and wait for a signal
-                                # then exit the for loop and resume the download
-                                event_thread.wait()
-                                break
-                            else:
-                                pause_resume = "Pause"
-                                btn_text.set(pause_resume)
-                            file_obj.write(chunk)
-                            bytes_read += len(chunk)
-                            current_size = os.path.getsize(path)
-                            # Update the current downloaded size
-                            size.set(str(get_standard_size(current_size)))
-                            if total_size is not None:
-                                # Update the progress bar value
-                                percent_value = round((int(current_size) / int(total_size)) * 100)
-                                percent.set(str(percent_value) + " %")
-                                progress['value'] = percent_value
-                            else:
-                                percent.set("Unknown")
-                                progress.config(mode="indeterminate")
-                                progress.start()
-                    print("Exiting for loop")
-                    if total_size is not None:
-                        current_size = os.path.getsize(path)
-                        size.set(str(get_standard_size(current_size)))
-                        percent_value = round((int(current_size) / int(total_size)) * 100)
-                        percent.set(str(percent_value) + " %")
-                        progress['value'] = percent_value
+            loop = True
+            bytes_read = 0
+            # Main loop of thread
+            while loop:
+                try:
+                    # Define the mode of writing: "wb" -> writing binary ; "ab" -> append binary
+                    # "wb" is used the first time the file is created
+                    # "ab" is used on every resume to continue the download
+                    if bytes_read == 0:
+                        write_mode = "wb"
                     else:
-                        current_size = os.path.getsize(path)
-                        size.set(str(get_standard_size(current_size)))
-                        percent.set("100 %")
-                        progress['value'] = 100
-                if progress['value'] == 100:
-                    loop = False
-            except tkinter.TclError:
-                print("Terminating Thread")
-
+                        write_mode = "ab"
+                        resume_header = {'Range': 'bytes=%d-' % bytes_read}
+                        req = requests.get(url, headers=resume_header, stream=True, allow_redirects=True)
+                    # Create the file in the selected path
+                    with open(path, write_mode) as file_obj:
+                        # Start the download and write the file with a
+                        for chunk in req.iter_content(chunk_size=1024):
+                            if chunk:
+                                if event_thread.isSet() is False:
+                                    pause_resume = "Resume"
+                                    btn_text.set(pause_resume)
+                                    # Suspend the thread and wait for a signal
+                                    # then exit the for loop and resume the download
+                                    event_thread.wait()
+                                    break
+                                else:
+                                    pause_resume = "Pause"
+                                    btn_text.set(pause_resume)
+                                file_obj.write(chunk)
+                                bytes_read += len(chunk)
+                                current_size = os.path.getsize(path)
+                                # Update the current downloaded size
+                                size.set(str(get_standard_size(current_size)))
+                                if total_size is not None:
+                                    # Update the progress bar value
+                                    percent_value = round((int(current_size) / int(total_size)) * 100)
+                                    percent.set(str(percent_value) + " %")
+                                    progress['value'] = percent_value
+                                else:
+                                    percent.set("Unknown")
+                                    progress.config(mode="indeterminate")
+                                    progress.start()
+                        print("Exiting for loop")
+                        if total_size is not None:
+                            current_size = os.path.getsize(path)
+                            size.set(str(get_standard_size(current_size)))
+                            percent_value = round((int(current_size) / int(total_size)) * 100)
+                            percent.set(str(percent_value) + " %")
+                            progress['value'] = percent_value
+                        else:
+                            current_size = os.path.getsize(path)
+                            size.set(str(get_standard_size(current_size)))
+                            percent.set("100 %")
+                            progress['value'] = 100
+                    if progress['value'] == 100:
+                        loop = False
+                except tkinter.TclError:
+                    print("Terminating Thread")
+        else:
+            messagebox.showwarning(title="Error",
+                                   message="File already exist in the selected path or is downloading")
     else:
         messagebox.showwarning(title="Error",
                                message="The selected path doesn't exist. Please select a correct one")
