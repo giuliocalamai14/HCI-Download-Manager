@@ -134,7 +134,7 @@ def add_download_item(url, event_thread):
         size = StringVar()
         size.set("0 KB")
         label_size = Label(frame_item, textvariable=size, padx=5, anchor="w", bg=bg_item, fg="white")
-        label_size.config(font = ("Arial", "11"))
+        label_size.config(font=("Arial", "11"))
         label_size.grid(row=1, column=2)
 
         # Buttons for pause/resume and delete downloads
@@ -231,6 +231,7 @@ frame.pack(fill="both", expand=True)
 
 # Create a input_frame that will contain the buttons
 input_frame = Frame(frame, bg=bg_bar, padx=5, pady=5)
+input_frame.grid_columnconfigure(0, weight=1)
 
 # Define and place the 2 buttons inside the input_frame element
 label_url = Label(input_frame, text="Insert URL", bg=bg_bar, fg="white", padx=5, pady=5, anchor="w")
@@ -246,7 +247,6 @@ button_download = Button(input_frame, text="Download", bg=bg_button, fg="black",
                          activeforeground="black", borderless=True, focusthickness=0, command=pass_url_data, padx=10,
                          pady=10)
 button_download.grid(row=0, column=2, sticky="nsew", padx=10, pady=10)
-input_frame.grid_columnconfigure(0, weight=1)
 label_directory = Label(input_frame, text="SAVE directory", bg=bg_bar, fg="white", padx=5, pady=5, anchor="w")
 label_directory.grid(row=1, column=0, sticky="nsew")
 
