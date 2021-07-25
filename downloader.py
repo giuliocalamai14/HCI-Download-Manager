@@ -132,7 +132,8 @@ def add_download_item(url, event_thread, gui):
                             downloading_item.size.set(str(get_standard_size(current_size)))
                             downloading_item.percent.set("100 %")
                             downloading_item.progress['value'] = 100
-                    if downloading_item.progress['value'] == 100:
+                    if downloading_item.progress['value'] >= 100:
+                        downloading_item.percent.set("100 %")
                         loop = False
                 except tkinter.TclError:
                     print("Terminating Thread")
